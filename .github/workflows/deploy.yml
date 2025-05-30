@@ -5,41 +5,37 @@ on:
   push:
     branches:
       - none
-    paths:
-      - 'iac/**'
-      - '.github/workflows/deploy.yml'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    env:
+      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      - name: Setup Node.js
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js (optional, if needed)
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
 
-      - name: Install Pulumi CLI
+      - name: Setup Pulumi
         uses: pulumi/actions@v4
 
-      - name: Login to Pulumi
+      - name: Pulumi Login
         run: pulumi login
 
       - name: Install dependencies
         run: npm install
         working-directory: ./iac
 
-      - name: Set Pulumi Config
-        working-directory: ./iac
-        run: |
-          pulumi config set azure:clientId ${{ secrets.ARM_CLIENT_ID }} --secret
-          pulumi config set azure:clientSecret ${{ secrets.ARM_CLIENT_SECRET }} --secret
-          pulumi config set azure:tenantId ${{ secrets.ARM_TENANT_ID }}
-          pulumi config set azure:subscriptionId ${{ secrets.ARM_SUBSCRIPTION_ID }}
-
-      - name: Pulumi Up (Deploy Infra)
+      - name: Pulumi Up
         run: pulumi up --yes
         working-directory: ./iac
