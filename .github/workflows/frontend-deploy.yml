@@ -22,9 +22,9 @@ jobs:
       - name: 🛠️ Build and Push Docker Image
         run: |
           az acr login --name guardnew
-          docker build -t guardnew.azurecr.io/frontend:latest ./frontend
+          docker build -t guardnew.azurecr.io/frontend:latest ./app/frontend
           docker push guardnew.azurecr.io/frontend:latest
-
+          
       - name: 🛡️ Snyk Container Scan
         uses: snyk/actions/docker@master  # ✅ use master or a commit SHA
         with:
