@@ -1,4 +1,4 @@
-# iac/Pulumi.yaml
 name: azure-iac
 runtime: nodejs
-description: Infra project
+description: A basic Pulumi project for Azure resources
+
