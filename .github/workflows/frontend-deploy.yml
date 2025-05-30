@@ -3,7 +3,7 @@ name: Frontend Docker Build & Deploy
 on:
   push:
     paths:
-      - frontend/**  # adjust as needed
+      - frontend/**  # adjust path as needed
   workflow_dispatch:
 
 jobs:
@@ -22,11 +22,11 @@ jobs:
       - name: 🛠️ Build and Push Docker Image
         run: |
           az acr login --name guardnew
-          docker build -t guardnew.azurecr.io/frontend:latest .
+          docker build -t guardnew.azurecr.io/frontend:latest ./frontend
           docker push guardnew.azurecr.io/frontend:latest
 
       - name: 🛡️ Snyk Container Scan
-        uses: snyk/actions/docker@v1
+        uses: snyk/actions/docker@master  # ✅ use master or a commit SHA
         with:
           image: guardnew.azurecr.io/frontend:latest
         env:
