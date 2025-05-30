@@ -34,7 +34,7 @@ jobs:
         working-directory: ./iac
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./iac
 
       - name: 🧱 Select or create Pulumi stack
