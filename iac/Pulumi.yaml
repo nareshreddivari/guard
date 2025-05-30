@@ -1,3 +1,4 @@
-name: guard-iac
+# /iac/Pulumi.yaml
+name: azure-iac
 runtime: nodejs
-description: Pulumi project to provision Azure infrastructure for guard
+description: Infrastructure for ACA, Logic Apps, Functions, Cosmos DB
