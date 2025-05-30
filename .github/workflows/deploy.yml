@@ -31,11 +31,15 @@ jobs:
 
       - name: Pulumi Login
         run: pulumi login
-
-      - name: Install dependencies
+      
+      - name: Select Pulumi Stack
+        run: pulumi stack select dev || pulumi stack init dev
+      
+      - name: Install NPM dependencies
         run: npm install
         working-directory: ./iac
-
+      
       - name: Pulumi Up
         run: pulumi up --yes
         working-directory: ./iac
+
