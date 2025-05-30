@@ -1,0 +1,3 @@
+name: guard-iac
+runtime: nodejs
+description: Pulumi project to provision Azure infrastructure for guard
