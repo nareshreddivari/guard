@@ -1,19 +1,17 @@
-name: Frontend Deploy
+name: Frontend Docker Build & Deploy
 
 on:
   push:
-    branches:
-      - none  # or your actual deployment branch
     paths:
-      - 'frontend/**'  # Optional: only run if frontend code changes
+      - frontend/**  # adjust as needed
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout repository
+      - name: 📥 Checkout source code
         uses: actions/checkout@v4
 
       - name: 🔐 Azure CLI Login
@@ -24,8 +22,15 @@ jobs:
       - name: 🛠️ Build and Push Docker Image
         run: |
           az acr login --name guardnew
-          docker build -t guardnew.azurecr.io/frontend:latest ./frontend
+          docker build -t guardnew.azurecr.io/frontend:latest .
           docker push guardnew.azurecr.io/frontend:latest
+
+      - name: 🛡️ Snyk Container Scan
+        uses: snyk/actions/docker@v1
+        with:
+          image: guardnew.azurecr.io/frontend:latest
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: 🚢 Deploy to Azure Container App
         run: |
