@@ -1,0 +1,35 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches:
+      - none  # or your actual deployment branch
+    paths:
+      - 'frontend/**'  # Optional: only run if frontend code changes
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔐 Azure CLI Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 🛠️ Build and Push Docker Image
+        run: |
+          az acr login --name guardnew
+          docker build -t guardnew.azurecr.io/frontend:latest ./frontend
+          docker push guardnew.azurecr.io/frontend:latest
+
+      - name: 🚢 Deploy to Azure Container App
+        run: |
+          az containerapp update \
+            --name frontend-app \
+            --resource-group guardrg \
+            --image guardnew.azurecr.io/frontend:latest
