@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - none
+      - none  # Change to your actual branch name if needed (e.g., main)
 
 jobs:
   deploy:
@@ -21,25 +21,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Node.js (optional, if needed)
+      - name: Install Node.js (required for Pulumi TypeScript)
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Setup Pulumi
+      - name: Setup Pulumi CLI
         uses: pulumi/actions@v4
 
-      - name: Pulumi Login
+      - name: Pulumi Login (non-interactive)
         run: pulumi login
-      
-      - name: Select Pulumi Stack
-        run: pulumi stack select dev || pulumi stack init dev
-      
-      - name: Install NPM dependencies
+
+      - name: Select or Init Stack
+        working-directory: ./iac
+        run: |
+          pulumi stack select nareshreddivari/azure-iac/dev || pulumi stack init nareshreddivari/azure-iac/dev
+
+      - name: Install NPM Dependencies
         run: npm install
         working-directory: ./iac
-      
-      - name: Pulumi Up
+
+      - name: Deploy via Pulumi
         run: pulumi up --yes
         working-directory: ./iac
-
