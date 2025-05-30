@@ -6,7 +6,7 @@ on:
       - none
     paths:
       - 'app/**'
-
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
