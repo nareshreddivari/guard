@@ -1,0 +1,6 @@
+trigger:
+  - main
+jobs:
+  - job: BuildImage
+    steps:
+      - script: echo "Build and push Docker image here"

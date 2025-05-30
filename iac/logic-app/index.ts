@@ -1,0 +1,1 @@
+export const hello = "Logic App setup placeholder";

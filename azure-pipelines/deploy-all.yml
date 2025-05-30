@@ -1,0 +1,8 @@
+trigger:
+  - main
+stages:
+  - stage: Deploy
+    jobs:
+      - template: ../templates/deploy-service.yml
+        parameters:
+          servicePath: iac/aca

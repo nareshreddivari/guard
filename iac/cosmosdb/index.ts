@@ -1,0 +1,1 @@
+export const hello = "Cosmos DB setup placeholder";

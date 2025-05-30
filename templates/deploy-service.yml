@@ -1,12 +1,10 @@
-# templates/deploy-service.yml
 parameters:
   - name: servicePath
     type: string
-
 jobs:
   - job: DeployService
     steps:
       - checkout: self
       - script: |
           cd ${{ parameters.servicePath }}
-          pulumi up --stack $(pulumiStack) --non-interactive --yes
+          echo "Deploying ${{ parameters.servicePath }}"
