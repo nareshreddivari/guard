@@ -41,6 +41,10 @@ jobs:
         run: |
           pulumi stack select nareshreddivari/azure-iac/dev || pulumi stack init nareshreddivari/azure-iac/dev
         working-directory: ./iac
+     
+      - name: ⚙️ Set location config for Pulumi stack
+        run: pulumi config set azure-native:location "East US"
+        working-directory: ./iac
 
       - name: 🚀 Deploy infrastructure via Pulumi
         run: pulumi up --yes
