@@ -1,4 +1,4 @@
-# /iac/Pulumi.yaml
+# iac/Pulumi.yaml
 name: azure-iac
 runtime: nodejs
-description: Infrastructure for ACA, Logic Apps, Functions, Cosmos DB
+description: Infra project
