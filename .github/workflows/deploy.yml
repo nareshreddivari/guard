@@ -1,10 +1,10 @@
 name: Pulumi Deploy
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - none  # Change to your actual branch name if needed (e.g., main)
+      - none  # Update with your desired branch name
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -18,29 +18,30 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Node.js (required for Pulumi TypeScript)
+      - name: 🟢 Setup Node.js (TypeScript projects need Node)
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Setup Pulumi CLI
+      - name: 🛠️ Install Pulumi CLI
         uses: pulumi/actions@v4
 
-      - name: Pulumi Login (non-interactive)
+      - name: 🔐 Login to Pulumi
         run: pulumi login
-
-      - name: Select or Init Stack
         working-directory: ./iac
+
+      - name: 📦 Install dependencies
+        run: npm ci
+        working-directory: ./iac
+
+      - name: 🧱 Select or create Pulumi stack
         run: |
           pulumi stack select nareshreddivari/azure-iac/dev || pulumi stack init nareshreddivari/azure-iac/dev
-
-      - name: Install NPM Dependencies
-        run: npm install
         working-directory: ./iac
 
-      - name: Deploy via Pulumi
+      - name: 🚀 Deploy infrastructure via Pulumi
         run: pulumi up --yes
         working-directory: ./iac
