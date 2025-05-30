@@ -1,0 +1,36 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - none
+    paths:
+      - 'app/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: <your-acr-name>.azurecr.io
+          username: ${{ secrets.ARM_CLIENT_ID }}
+          password: ${{ secrets.ARM_CLIENT_SECRET }}
+
+      - name: Build and Push frontend
+        run: |
+          docker build -t <your-acr-name>.azurecr.io/frontend:latest ./app/frontend
+          docker push <your-acr-name>.azurecr.io/frontend:latest
+
+      - name: Build and Push backend
+        run: |
+          docker build -t <your-acr-name>.azurecr.io/backend:latest ./app/backend
+          docker push <your-acr-name>.azurecr.io/backend:latest
