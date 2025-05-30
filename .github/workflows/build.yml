@@ -21,16 +21,16 @@ jobs:
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: <your-acr-name>.azurecr.io
+          login-server: guardnew.azurecr.io
           username: ${{ secrets.ARM_CLIENT_ID }}
           password: ${{ secrets.ARM_CLIENT_SECRET }}
 
       - name: Build and Push frontend
         run: |
-          docker build -t <your-acr-name>.azurecr.io/frontend:latest ./app/frontend
-          docker push <your-acr-name>.azurecr.io/frontend:latest
+          docker build -t guardnew.azurecr.io/frontend:latest ./app/frontend
+          docker push guardnew.azurecr.io/frontend:latest
 
       - name: Build and Push backend
         run: |
-          docker build -t <your-acr-name>.azurecr.io/backend:latest ./app/backend
-          docker push <your-acr-name>.azurecr.io/backend:latest
+          docker build -t guardnew.azurecr.io/backend:latest ./app/backend
+          docker push guardnew.azurecr.io/backend:latest
