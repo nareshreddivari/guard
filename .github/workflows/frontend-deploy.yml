@@ -25,13 +25,17 @@ jobs:
           docker build -t guardnew.azurecr.io/frontend:latest ./app/frontend
           docker push guardnew.azurecr.io/frontend:latest
           
-      - name: 🛡️ Snyk Container Scan
-        uses: snyk/actions/docker@master  # ✅ use master or a commit SHA
-        with:
-          image: guardnew.azurecr.io/frontend:latest
+      # - name: 🛡️ Snyk Container Scan
+      #   uses: snyk/actions/docker@master  # ✅ use master or a commit SHA
+      #   with:
+      #     image: guardnew.azurecr.io/frontend:latest
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: 🛡️ Snyk Monitor Container
+        run: snyk monitor --docker guardnew.azurecr.io/frontend:latest --project-name=frontend-container
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
+      
       - name: 🚢 Deploy to Azure Container App
         run: |
           az containerapp update \
