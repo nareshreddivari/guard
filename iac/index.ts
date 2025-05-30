@@ -1,11 +1,10 @@
-// import * as pulumi from "@pulumi/pulumi";
-// import * as azure from "@pulumi/azure-native";
-
-// // Sample ACA resource
-// const resourceGroup = new azure.resources.ResourceGroup("rg-demo");
-
-// export const resourceGroupName = resourceGroup.name;
 import * as pulumi from "@pulumi/pulumi";
+import * as azure from "@pulumi/azure-native";
 
-const config = new pulumi.Config();
-export const message = "Pulumi setup complete!";
+// Create a resource group
+const resourceGroup = new azure.resources.ResourceGroup("rg-example");
+
+// import * as pulumi from "@pulumi/pulumi";
+
+// const config = new pulumi.Config();
+// export const message = "Pulumi setup complete!";
