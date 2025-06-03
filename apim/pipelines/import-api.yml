@@ -1,0 +1,34 @@
+# apim/pipelines/import-api.yml
+
+trigger: none  # You can trigger manually for now
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  resourceGroup: 'guardrg'
+  apimServiceName: 'guardapim'
+  apiId: 'petstore-api'
+  apiPath: 'petstore-api'
+  openApiSpecPath: 'apim/specs/petstore.yaml'
+
+stages:
+- stage: ImportAPI
+  displayName: 'Import OpenAPI Spec into APIM'
+  jobs:
+  - job: Import
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'guardsc'  # 👈 Update with actual name
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az apim api import \
+            --resource-group $(resourceGroup) \
+            --service-name $(apimServiceName) \
+            --path $(apiPath) \
+            --api-id $(apiId) \
+            --specification-format OpenApi \
+            --specification-path $(openApiSpecPath) \
+            --api-revision 1
