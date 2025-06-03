@@ -1,0 +1,70 @@
+trigger:
+  paths:
+    include:
+      - frontend/**
+
+# pr:
+#   paths:
+#     include:
+#       - frontend/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'frontend'
+  imageTag: 'latest'
+  acrName: 'guardnew'
+  acrLoginServer: 'guardnew.azurecr.io'
+
+stages:
+- stage: Build_And_Scan
+  displayName: 'Build and Scan Container'
+  jobs:
+  - job: BuildAndScan
+    displayName: 'Build, Push, and Snyk Scan'
+    steps:
+
+    - task: Checkout@1
+
+    - task: AzureCLI@2
+      displayName: 'Login to Azure ACR'
+      inputs:
+        azureSubscription: 'guardsc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az acr login --name $(acrName)
+          docker build -t $(acrLoginServer)/$(imageName):$(imageTag) ./app/frontend
+          docker push $(acrLoginServer)/$(imageName):$(imageTag)
+
+    - script: |
+        npm install -g snyk
+      displayName: 'Install Snyk CLI'
+
+    - script: |
+        snyk test --docker $(acrLoginServer)/$(imageName):$(imageTag) || true
+        snyk monitor --docker $(acrLoginServer)/$(imageName):$(imageTag) --project-name=$(imageName)-container
+      env:
+        SNYK_TOKEN: $(SNYK_TOKEN)
+      displayName: 'Snyk Scan and Monitor'
+
+- stage: Deploy
+  displayName: 'Deploy to Azure Container App'
+  dependsOn: Build_And_Scan
+  jobs:
+  - job: DeployApp
+    displayName: 'Deploy to ACA'
+    steps:
+
+    - task: AzureCLI@2
+      displayName: 'Deploy frontend-app to ACA'
+      inputs:
+        azureSubscription: 'guardsc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az containerapp update \
+            --name frontend-app \
+            --resource-group guardrg \
+            --image $(acrLoginServer)/$(imageName):$(imageTag)
