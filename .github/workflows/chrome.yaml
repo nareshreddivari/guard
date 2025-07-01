@@ -1,0 +1,40 @@
+name: Build and run tests
+
+on:
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  build:
+    name: build_and_run_tests
+    runs-on: [self-hosted, Windows, X64, organization]
+
+    steps:
+      - name: Echo workflow name
+        run: echo "🔧 Build and run tests workflow started"
+
+      - name: Download and Install Chrome Silently
+        shell: powershell
+        run: |
+          Write-Host "🌐 Downloading Chrome Standalone Enterprise MSI..."
+          $url = "https://dl.google.com/tag/s/appguid={8A69D345-D564-463c-AFF1-A69D9E530F96}&iid=&lang=en&browser=3&usagestats=0&appname=Google%20Chrome&needsadmin=false/dl/chrome/install/googlechromestandaloneenterprise64.msi"
+          Invoke-WebRequest $url -OutFile "chrome_installer.msi"
+
+          Write-Host "📦 Installing Chrome silently..."
+          Start-Process msiexec.exe -ArgumentList "/i chrome_installer.msi /qn /norestart" -Wait
+
+          Write-Host "🧹 Cleaning up installer..."
+          Remove-Item "chrome_installer.msi"
+
+      - name: Verify Chrome Installation and Print Version
+        shell: powershell
+        run: |
+          $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+          if (Test-Path $chromePath) {
+            Write-Host "✅ Chrome installed successfully."
+            $version = & "$chromePath" --version
+            $cleanVersion = $version -replace 'Google Chrome ', ''
+            Write-Host "🧪 Installed Chrome version: $cleanVersion"
+          } else {
+            Write-Error "❌ Chrome installation failed or executable not found."
+            exit 1
+          }
