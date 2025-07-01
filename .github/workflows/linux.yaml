@@ -1,0 +1,30 @@
+name: Build and run tests (Linux)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build_and_run_tests_on_linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo workflow name
+        run: echo "🔧 Build and run tests on Linux workflow started"
+
+      - name: Install Google Chrome on Linux
+        run: |
+          echo "📦 Installing Google Chrome..."
+          wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome.deb || sudo apt-get -f install -y
+          rm google-chrome.deb
+
+      - name: Verify Chrome Installation and Print Version
+        run: |
+          if command -v google-chrome > /dev/null; then
+            echo "✅ Chrome installed successfully."
+            google-chrome --version
+          else
+            echo "❌ Chrome installation failed."
+            exit 1
+          fi
